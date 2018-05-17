@@ -285,6 +285,6 @@ void NCSComposition::cbDetect(const sensor_msgs::msg::Image::SharedPtr image_msg
 }
 }  // namespace movidius_ncs_stream
 
-#include <class_loader/class_loader_register_macro.h>
+#include <class_loader/register_macro.hpp>
 
 CLASS_LOADER_REGISTER_CLASS(movidius_ncs_stream::NCSComposition, rclcpp::Node);
