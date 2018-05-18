@@ -18,7 +18,7 @@ This project is a ROS2 wrapper for NC API of [NCSDK](https://movidius.github.io/
 * RGB Camera, e.g. RealSense D400 Series
 
 ## 3 Environment Setup
-* Install ROS2 Ardent ([guide](https://github.com/ros2/ros2/wiki/Linux-Install-Debians)) 
+* Install ROS2 ([guide](https://github.com/ros2/ros2/wiki/Linux-Development-Setup)) 
 * Create a ROS2 ament workspace
 ```Shell
 mkdir -p ~/ros2_ws/src
