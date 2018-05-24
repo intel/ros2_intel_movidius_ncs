@@ -4,7 +4,7 @@
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+#     http://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,12 +15,11 @@
 from launch.exit_handler import default_exit_handler
 from ros2run.api import get_executable_path
 
-def launch(launch_descriptor, argv):
-  package = 'movidius_ncs_image'
-  launch_descriptor.add_process(
-    cmd=[get_executable_path(package_name=package, executable_name='movidius_ncs_image')],
-    name='movidius_ncs_image',
-    exit_handler=default_exit_handler,
-  )
 
-  return launch_descriptor
+def launch(launch_descriptor, argv):
+    package = 'movidius_ncs_image'
+    launch_descriptor.add_process(
+        cmd=[get_executable_path(package_name=package, executable_name='movidius_ncs_image')],
+        name='movidius_ncs_image',
+        exit_handler=default_exit_handler,)
+    return launch_descriptor
