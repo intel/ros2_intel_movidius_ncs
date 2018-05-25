@@ -87,11 +87,23 @@ if(UNIX OR APPLE)
   set(CUDA_PROPAGATE_HOST_FLAGS OFF)
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -D_FORTIFY_SOURCE=2")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")
+endif()
 
-  # Add x86 intrinsic compiler support
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
+# Add x86 intrinsic compiler support
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+execute_process(
+    COMMAND bash -c "lscpu | grep -qi flags | grep -qi flags | grep -qi f16c"
+    RESULT_VARIABLE SUPPORT_F16C)
+if (SUPPORT_F16C EQUAL 0)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mf16c")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+  add_definitions(-DSUPPORT_MF16C)
+endif()
+
+execute_process(
+    COMMAND bash -c "lscpu | grep -qi flags | grep -qi flags | grep -qi sse4_1"
+    RESULT_VARIABLE SUPPORT_SSE41)
+if (SUPPORT_SSE41 EQUAL 0)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
 endif()
 
 # Install nodelet library

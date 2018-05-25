@@ -18,9 +18,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-#if defined(__i386__) || defined(__x86_64__)
-#include <x86intrin.h>
-#endif
 #include "movidius_ncs_lib/exception.hpp"
 #include "movidius_ncs_lib/exception_util.hpp"
 #include "movidius_ncs_lib/graph.hpp"

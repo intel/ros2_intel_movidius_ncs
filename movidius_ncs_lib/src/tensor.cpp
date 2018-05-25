@@ -17,7 +17,7 @@
 #include <utility>
 #include <vector>
 #include <string>
-#if defined(__i386__) || defined(__x86_64__)
+#ifdef SUPPORT_F16C
 #include <x86intrin.h>
 #endif
 #include <opencv2/opencv.hpp>
@@ -61,7 +61,7 @@ void Tensor::loadImageData(const cv::Mat& image)
     uint16_t r16;
     uint16_t g16;
     uint16_t b16;
-#if defined(__i386__) || defined(__x86_64__)
+#ifdef SUPPORT_F16C
     r16 = _cvtss_sh(r32, 0);
     g16 = _cvtss_sh(g32, 0);
     b16 = _cvtss_sh(b32, 0);
@@ -84,7 +84,7 @@ void Tensor::clearTensor()
   }
 }
 
-#if !defined(__i386__) && !defined(__x86_64__)
+#ifndef SUPPORT_F16C
 void Tensor::fp16tofp32(float* __restrict out, uint16_t in)
 {
   uint32_t t1;
@@ -119,6 +119,6 @@ void Tensor::fp32tofp16(uint16_t* __restrict out, float in)
   t1 |= t2;
   *(reinterpret_cast<uint16_t*>(out)) = t1;
 }
-#endif  // !defined(__i386__) && !defined(__x86_64__)
+#endif
 
 }  // namespace movidius_ncs_lib
