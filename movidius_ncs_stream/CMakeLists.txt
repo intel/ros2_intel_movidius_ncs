@@ -41,6 +41,11 @@ ament_target_dependencies(${PROJECT_NAME}
   "OpenCV")
 rclcpp_register_node_plugins(${PROJECT_NAME} "movidius_ncs_stream::NCSComposition")
 
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
 # Flags
 if(UNIX OR APPLE)
   # Linker flags.

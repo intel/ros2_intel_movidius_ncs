@@ -34,6 +34,11 @@ ament_target_dependencies(${PROJECT_NAME}
   "object_msgs"
   "OpenCV")
 
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
 # Flags
 if(UNIX OR APPLE)
   # Linker flags.

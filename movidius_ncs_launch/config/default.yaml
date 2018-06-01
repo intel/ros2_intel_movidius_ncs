@@ -1,1 +1,2 @@
 param_file: mobilenetssd.yaml
+input_topic: /camera/color/image_raw
