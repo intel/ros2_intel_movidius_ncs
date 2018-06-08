@@ -61,8 +61,8 @@ ament_target_dependencies(${PROJECT_NAME}
   "rviz_yaml_cpp_vendor"
   "OpenCV"
   "rclcpp"
+  "object_msgs"
   "ament_index_cpp"
-  "movidius_ncs_lib"
 )
 
 ament_export_include_directories(include)
@@ -139,29 +139,6 @@ if(BUILD_TESTING)
     )
     ament_target_dependencies(unittest_environment
     rclcpp)
-  endif()
-endif()
-
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  find_package(rclcpp REQUIRED)
-  find_package(std_msgs REQUIRED)
-  find_package(ament_index_cpp REQUIRED)
-  find_package(builtin_interfaces REQUIRED)
-  find_package(movidius_ncs_lib REQUIRED)
-
-  ament_lint_auto_find_test_dependencies()
-
-  ament_add_gtest(unittest_function tests/unittest_function.cpp)
-  if(TARGET unittest_function)
-    target_include_directories(unittest_function PUBLIC
-      ${${PROJECT_NAME}_INCLUDE_DIRS}
-    )
-    ament_target_dependencies(unittest_function
-    rclcpp
-    OpenCV
-    ament_index_cpp
-    movidius_ncs_lib)
   endif()
 endif()
 

@@ -16,6 +16,8 @@
 
 #include <string>
 #include <fstream>
+#include <iostream>
+#include <cstdio>
 
 #include <gtest/gtest.h>
 #include "rclcpp/rclcpp.hpp"
@@ -36,8 +38,14 @@ void getCnnType()
     std::string prefix_path;
     std::string line;
     std::string param_file;
+    char composition_path[100];
     ament_index_cpp::get_resource("packages", "movidius_ncs_launch", content, &prefix_path);
     std::ifstream fin(prefix_path + "/share/movidius_ncs_launch/config/default.yaml");
+    if(!std::ifstream("./../../../install/bin/api_composition").is_open())
+    {
+       snprintf(composition_path,100,"cp %s/lib/composition/api_composition %s/bin","./../../../install","./../../../install");
+       system(composition_path);
+    }
     if (std::getline(fin, line))
     {
         param_file = line.substr(line.find(":") + 1);
