@@ -18,6 +18,10 @@ project(movidius_ncs_lib)
 find_package(ament_cmake REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(rviz_yaml_cpp_vendor REQUIRED)
+find_package(ament_index_cpp REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(object_msgs REQUIRED)
 
 find_path(MVNC_HEADER_FILE
           mvnc.h
@@ -28,7 +32,11 @@ if(NOT MVNC_HEADER_FILE)
 endif()
 
 include_directories(include
-  ${rviz_yaml_cpp_vendor_DIR}/../../../opt/rviz_yaml_cpp_vendor/include)
+  ${rviz_yaml_cpp_vendor_DIR}/../../../opt/rviz_yaml_cpp_vendor/include
+  ${rclcpp_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+  ${ament_INCLUDE_DIRS}
+)
 
 add_library(${PROJECT_NAME} SHARED
   src/ncs.cpp
@@ -40,19 +48,25 @@ add_library(${PROJECT_NAME} SHARED
   src/result.cpp
   src/param.cpp)
 target_link_libraries(${PROJECT_NAME}
-  mvnc)
+  mvnc
+  ${rclcpp_LIBRARIES}
+  ${ament_LIBRARIES}
+  ${OpenCV_LIBS} 
+  ${GTEST_LIBRARIES} 
+  ${UNITEST_LIBRARIES}
+  ${rviz_yaml_cpp_vendor_DIR}
+)
 
 ament_target_dependencies(${PROJECT_NAME}
   "rviz_yaml_cpp_vendor"
-  "OpenCV")
+  "OpenCV"
+  "rclcpp"
+  "object_msgs"
+  "ament_index_cpp"
+)
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
-
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
-endif()
 
 # Flags
 if(UNIX OR APPLE)
@@ -111,5 +125,21 @@ install(DIRECTORY include/
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  find_package(rclcpp REQUIRED)
+  find_package(std_msgs REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+
+  ament_add_gtest(unittest_environment tests/unittest_environment.cpp)
+  if(TARGET unittest_environment)
+    target_include_directories(unittest_environment PUBLIC
+      ${${PROJECT_NAME}_INCLUDE_DIRS}
+    )
+    ament_target_dependencies(unittest_environment
+    rclcpp)
+  endif()
+endif()
 
 ament_package()
