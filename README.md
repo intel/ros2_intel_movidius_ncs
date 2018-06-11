@@ -10,7 +10,7 @@ This project is a ROS2 wrapper for NC API of [NCSDK](https://movidius.github.io/
 * Support multiple CNN models of Caffe and Tensorflow
   
 ## 2 Prerequisite
-* An x86_64 computer running Ubuntu 16.04
+* An x86_64 computer running Ubuntu 16.04. OS X and Windows are not supported yet
 * ROS2 Ardent
 * Movidius Neural Compute Stick (NCS)
 * Movidius Neural Compute (MvNC) SDK
