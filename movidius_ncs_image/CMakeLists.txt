@@ -34,11 +34,6 @@ ament_target_dependencies(${PROJECT_NAME}
   "object_msgs"
   "OpenCV")
 
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
-endif()
-
 # Flags
 if(UNIX OR APPLE)
   # Linker flags.
@@ -86,5 +81,30 @@ install(TARGETS ${PROJECT_NAME}
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
         RUNTIME DESTINATION lib/${PROJECT_NAME})
+
+install(TARGETS ${PROJECT_NAME}
+  RUNTIME DESTINATION bin
+)
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  find_package(rclcpp REQUIRED)
+  find_package(std_msgs REQUIRED)
+  find_package(object_msgs REQUIRED)
+  find_package(movidius_ncs_lib REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+
+  ament_add_gtest(unittest_image tests/unittest_image.cpp)
+  if(TARGET unittest_image)
+    target_include_directories(unittest_image PUBLIC
+      ${${PROJECT_NAME}_INCLUDE_DIRS}
+    )
+    ament_target_dependencies(unittest_image
+    rclcpp
+    object_msgs
+    ament_index_cpp
+    movidius_ncs_lib)
+  endif()
+endif()
 
 ament_package()
