@@ -34,6 +34,7 @@ ament_target_dependencies(${PROJECT_NAME}
   "ament_index_cpp"
   "class_loader"
   "rclcpp"
+  "test_rclcpp"
   "rviz_yaml_cpp_vendor"
   "sensor_msgs"
   "movidius_ncs_lib"
@@ -100,17 +101,27 @@ if(BUILD_TESTING)
   find_package(ament_index_cpp REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
-  ament_add_gtest(unittest_stream tests/unittest_stream.cpp)
-  if(TARGET unittest_stream)
-    target_include_directories(unittest_stream PUBLIC
-      ${${PROJECT_NAME}_INCLUDE_DIRS}
-    )
-    ament_target_dependencies(unittest_stream
-    rclcpp
-    object_msgs
-    ament_index_cpp
-    movidius_ncs_lib)
-  endif()
+  macro(custom_gtest target)
+    ament_add_gtest(${target} ${ARGN})
+    if(TARGET ${target})
+      target_include_directories(${target} PUBLIC
+        ${${PROJECT_NAME}_INCLUDE_DIRS})
+      ament_target_dependencies(${target}
+        "rclcpp"
+        "object_msgs"
+        "ament_index_cpp"
+        "movidius_ncs_lib")
+    endif()
+  endmacro()
+
+  macro(targets)
+    custom_gtest(unittest_stream
+      "tests/unittest_stream.cpp"
+      TIMEOUT 100)
+  endmacro()
+
+  call_for_each_rmw_implementation(targets)
+
 endif()
 
 ament_package()
