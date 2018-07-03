@@ -26,96 +26,98 @@
 #include <cstdio>
 #include <functional>
 #include <memory>
+#include <chrono>
+#include <stdexcept>
 
 #include "gtest/gtest.h"
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "ament_index_cpp/get_resource.hpp"
+#include "rclcpp/rate.hpp"
+
+#include "ament_index_cpp/get_package_prefix.hpp"
 
 #include "movidius_ncs_lib/param.hpp"
 
-static bool test_pass = false;
+bool test_pass = false;
 bool cnn_type_flag = false;
-
 #define MAXSIZE 100
+const char * buffer;
 
-void getCnnType()
+template<typename DurationT>
+void wait_for_future(
+  rclcpp::executor::Executor & executor,
+  std::shared_future<bool> & future,
+  const DurationT & timeout)
 {
-  std::string content;
-  std::string prefix_path;
-  std::string line;
-  std::string param_file;
+  using rclcpp::executor::FutureReturnCode;
+  rclcpp::executor::FutureReturnCode future_ret;
+  auto start_time = std::chrono::steady_clock::now();
+  future_ret = executor.spin_until_future_complete(future, timeout);
+  auto elapsed_time = std::chrono::steady_clock::now() - start_time;
+  EXPECT_EQ(FutureReturnCode::SUCCESS, future_ret) <<
+    "future failed to be set after: " <<
+    std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time).count() <<
+    " milliseconds\n";
+}
+
+std::string generate_file_path(std::string path)
+{
+  std::string base_path = __FILE__;
+  const std::string filename = "unittest_stream.cpp";
+  base_path = base_path.substr(0, base_path.length() - filename.length() - 1);
+  return base_path + "/" + path;
+}
+
+void initEnvironment()
+{
   char composition_path[MAXSIZE];
-  ament_index_cpp::get_resource("packages", "movidius_ncs_launch", content, &prefix_path);
-  std::ifstream fin(prefix_path + "/share/movidius_ncs_launch/config/default.yaml");
   if (!std::ifstream("./../../../install/bin/api_composition").is_open()) {
     snprintf(composition_path, MAXSIZE, "cp %s/lib/composition/api_composition %s/bin",
       "./../../../install", "./../../../install");
     system(composition_path);
   }
-  if (std::getline(fin, line)) {
-    param_file = line.substr(line.find(":") + 1);
-  }
-  auto param_ = std::make_shared<movidius_ncs_lib::Param>();
-  param_file.erase(param_file.begin(),
-    std::find_if(param_file.begin(), param_file.end(),
-    std::not1(std::ptr_fun<int, int>(std::isspace))));
-  if (param_->loadParamFromYAML(prefix_path +
-    "/share/movidius_ncs_launch/config/" + param_file))
-  {
-    if (!param_->cnn_type_.compare("alexnet") ||
-      !param_->cnn_type_.compare("googlenet") ||
-      !param_->cnn_type_.compare("inception_v1") ||
-      !param_->cnn_type_.compare("inception_v2") ||
-      !param_->cnn_type_.compare("inception_v3") ||
-      !param_->cnn_type_.compare("inception_v4") ||
-      !param_->cnn_type_.compare("mobilenet") ||
-      !param_->cnn_type_.compare("squeezenet"))
-    {
-      cnn_type_flag = false;
-    } else {
-      cnn_type_flag = true;
-    }
-  }
-}
-
-void show_image_classcification(const object_msgs::msg::Objects::SharedPtr msg)
-{
-  test_pass = true;
-  EXPECT_TRUE(true);
-  rclcpp::shutdown();
-}
-
-void show_image_detection(const object_msgs::msg::ObjectsInBoxes::SharedPtr msg)
-{
-  test_pass = true;
-  EXPECT_TRUE(true);
-  rclcpp::shutdown();
+  std::string buffer_temp = generate_file_path("launch_process.sh");
+  buffer = buffer_temp.c_str();
 }
 
 TEST(UnitTestStream, testStream) {
-  if (cnn_type_flag) {
-    auto node = rclcpp::Node::make_shared("movidius_ncs_stream_tests");
+  auto node = rclcpp::Node::make_shared("movidius_ncs_stream_tests");
+  rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
+  custom_qos_profile.depth = 5;
+  std::promise<bool> sub_called;
+  std::shared_future<bool> sub_called_future(sub_called.get_future());
 
-    auto sub = node->create_subscription<object_msgs::msg::ObjectsInBoxes>(
+  auto callback_classify =
+    [&sub_called](const object_msgs::msg::Objects::SharedPtr msg) -> void
+    {
+      test_pass = true;
+      sub_called.set_value(true);
+    };
+
+  auto callback_detect =
+    [&sub_called](const object_msgs::msg::ObjectsInBoxes::SharedPtr msg) -> void
+    {
+      test_pass = true;
+      sub_called.set_value(true);
+    };
+
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node);
+
+  {
+    auto sub1 = node->create_subscription<object_msgs::msg::ObjectsInBoxes>(
       "/movidius_ncs_stream/detected_objects",
-      [](const object_msgs::msg::ObjectsInBoxes::SharedPtr msg) -> void {
-        show_image_detection(msg);
-      });
-    rclcpp::spin(node);
-    rclcpp::shutdown();
-    EXPECT_TRUE(test_pass);
-  } else {
-    auto node = rclcpp::Node::make_shared("movidius_ncs_stream_tests");
+      callback_detect, custom_qos_profile);
 
-    auto sub = node->create_subscription<object_msgs::msg::Objects>(
+    auto sub2 = node->create_subscription<object_msgs::msg::Objects>(
       "/movidius_ncs_stream/classified_objects",
-      [](const object_msgs::msg::Objects::SharedPtr msg) -> void {
-        show_image_classcification(msg);
-      });
-    rclcpp::spin(node);
-    rclcpp::shutdown();
+      callback_classify, custom_qos_profile);
+
+    executor.spin_once(std::chrono::seconds(0));
+
+    wait_for_future(executor, sub_called_future, std::chrono::seconds(10));
+
     EXPECT_TRUE(test_pass);
   }
 }
@@ -124,12 +126,10 @@ int main(int argc, char ** argv)
 {
   testing::InitGoogleTest(&argc, argv);
   rclcpp::init(argc, argv);
-  system("realsense_ros2_camera &");
-  system("api_composition &");
-  system(
-    "launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/"
-    "ncs_stream_launch.py &");
-  getCnnType();
+  initEnvironment();
+  auto offset = std::chrono::seconds(15);
+  system(buffer);
+  rclcpp::sleep_for(offset);
   int ret = RUN_ALL_TESTS();
   system("killall api_composition &");
   system("killall realsense_ros2_camera &");
