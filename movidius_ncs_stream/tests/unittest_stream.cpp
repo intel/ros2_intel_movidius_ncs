@@ -13,11 +13,8 @@
 // limitations under the License.
 
 #include <opencv2/highgui/highgui.hpp>
-
 #include <opencv2/imgproc/imgproc.hpp>
-
 #include <object_msgs/msg/objects.hpp>
-
 #include <object_msgs/msg/objects_in_boxes.hpp>
 
 #include <string>
@@ -30,13 +27,9 @@
 #include <stdexcept>
 
 #include "gtest/gtest.h"
-
 #include "rclcpp/rclcpp.hpp"
-
 #include "rclcpp/rate.hpp"
-
 #include "ament_index_cpp/get_package_prefix.hpp"
-
 #include "movidius_ncs_lib/param.hpp"
 
 bool test_pass = false;
@@ -71,12 +64,6 @@ std::string generate_file_path(std::string path)
 
 void initEnvironment()
 {
-  char composition_path[MAXSIZE];
-  if (!std::ifstream("./../../../install/bin/api_composition").is_open()) {
-    snprintf(composition_path, MAXSIZE, "cp %s/lib/composition/api_composition %s/bin",
-      "./../../../install", "./../../../install");
-    system(composition_path);
-  }
   std::string buffer_temp = generate_file_path("launch_process.sh");
   buffer = buffer_temp.c_str();
 }
