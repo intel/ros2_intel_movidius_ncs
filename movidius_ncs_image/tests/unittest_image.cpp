@@ -12,9 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #include <object_msgs/srv/detect_object.hpp>
-
 #include <object_msgs/srv/classify_object.hpp>
 
 #include <string>
@@ -24,13 +22,9 @@
 #include <functional>
 
 #include "gtest/gtest.h"
-
 #include "rclcpp/rclcpp.hpp"
-
 #include "rclcpp/exceptions.hpp"
-
 #include "ament_index_cpp/get_resource.hpp"
-
 #include "movidius_ncs_lib/param.hpp"
 
 bool cnn_type_flag = false;
