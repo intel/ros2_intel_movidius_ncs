@@ -196,7 +196,7 @@ void NCSComposition::cbClassify(const sensor_msgs::msg::Image::SharedPtr image_m
   objs->image.data = image_msg->data;
 
   objs->inference_time_ms = result->time_taken;
-  // objs->fps = 1000.0 / std::chrono::duration_cast<std::chrono::milliseconds> \
+  // objs->fps = 1000.0 / std::chrono::duration_cast<std::chrono::milliseconds>
   // (end - start).count();
   // RCLCPP_INFO(this->get_logger(), "Total time: %fms", 1000.0 / objs->fps);
   // RCLCPP_INFO(this->get_logger(), "Inference time: %fms", objs_in_boxes->inference_time_ms);
