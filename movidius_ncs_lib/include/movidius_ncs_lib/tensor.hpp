@@ -53,8 +53,8 @@ public:
   }
 
 #ifndef SUPPORT_F16C
-  static void fp32tofp16(uint16_t* __restrict out, float in);
-  static void fp16tofp32(float* __restrict out, uint16_t in);
+  static void fp32tofp16(uint16_t * __restrict out, float in);
+  static void fp16tofp32(float * __restrict out, uint16_t in);
 #endif
 
 private:

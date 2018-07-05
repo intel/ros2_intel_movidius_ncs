@@ -82,7 +82,7 @@ void Tensor::clearTensor()
 }
 
 #ifndef SUPPORT_F16C
-void Tensor::fp16tofp32(float* __restrict out, uint16_t in)
+void Tensor::fp16tofp32(float * __restrict out, uint16_t in)
 {
   uint32_t t1;
   uint32_t t2;

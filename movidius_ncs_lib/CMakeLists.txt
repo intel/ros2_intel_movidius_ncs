@@ -99,7 +99,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 execute_process(
     COMMAND bash -c "lscpu | grep -qi flags | grep -qi flags | grep -qi f16c"
     RESULT_VARIABLE SUPPORT_F16C)
-if (SUPPORT_F16C EQUAL 0)
+if(SUPPORT_F16C EQUAL 0)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mf16c")
   add_definitions(-DSUPPORT_MF16C)
 endif()
@@ -107,7 +107,7 @@ endif()
 execute_process(
     COMMAND bash -c "lscpu | grep -qi flags | grep -qi flags | grep -qi sse4_1"
     RESULT_VARIABLE SUPPORT_SSE41)
-if (SUPPORT_SSE41 EQUAL 0)
+if(SUPPORT_SSE41 EQUAL 0)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
 endif()
 
