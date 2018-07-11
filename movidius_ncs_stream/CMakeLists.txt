@@ -24,6 +24,7 @@ find_package(movidius_ncs_lib REQUIRED)
 find_package(rviz_yaml_cpp_vendor REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(cv_bridge REQUIRED)
 
 include_directories(include
   ${rviz_yaml_cpp_vendor_DIR}/../../../opt/rviz_yaml_cpp_vendor/include)
@@ -38,7 +39,8 @@ ament_target_dependencies(${PROJECT_NAME}
   "sensor_msgs"
   "movidius_ncs_lib"
   "object_msgs"
-  "OpenCV")
+  "OpenCV"
+  "cv_bridge")
 rclcpp_register_node_plugins(${PROJECT_NAME} "movidius_ncs_stream::NCSComposition")
 
 if(BUILD_TESTING)

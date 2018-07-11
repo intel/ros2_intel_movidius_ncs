@@ -22,6 +22,7 @@
 #include <object_msgs/srv/detect_object.hpp>
 #include <sensor_msgs/msg/region_of_interest.hpp>
 #include <class_loader/register_macro.hpp>
+#include <cv_bridge/cv_bridge.h>
 
 #include <fstream>
 #include <functional>
@@ -141,43 +142,12 @@ void NCSComposition::init()
   }
 }
 
-int NCSComposition::encoding2mat_type(const std::string & encoding)
-{
-  if (encoding == "mono8") {
-    return CV_8UC1;
-  } else if (encoding == "bgr8") {
-    return CV_8UC3;
-  } else if (encoding == "mono16") {
-    return CV_16SC1;
-  } else if (encoding == "rgba8") {
-    return CV_8UC4;
-  } else if (encoding == "bgra8") {
-    return CV_8UC4;
-  } else if (encoding == "32FC1") {
-    return CV_32FC1;
-  } else if (encoding == "rgb8") {
-    return CV_8UC3;
-  } else {
-    throw std::runtime_error("Unsupported encoding type");
-  }
-}
-
 void NCSComposition::cbClassify(const sensor_msgs::msg::Image::SharedPtr image_msg)
 {
-  // cv_bridge::toCvCopy(image_msg, "bgr8")->image;
-  cv::Mat frame(image_msg->height, image_msg->width, encoding2mat_type(image_msg->encoding),
-    const_cast<unsigned char *>(image_msg->data.data()), image_msg->step);
-  cv::Mat cameraData;
-  if (image_msg->encoding == "rgb8") {
-    cv::cvtColor(frame, cameraData, cv::COLOR_RGB2BGR);
-  } else {
-    cameraData = frame;
-  }
-  // std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+  cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
   ncs_handle_->loadTensor(cameraData);
   ncs_handle_->classify();
   ClassificationResultPtr result = ncs_handle_->getClassificationResult();
-  // std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   auto objs = std::make_shared<object_msgs::msg::Objects>();
 
   for (auto item : result->items) {
@@ -188,37 +158,16 @@ void NCSComposition::cbClassify(const sensor_msgs::msg::Image::SharedPtr image_m
   }
 
   objs->header = image_msg->header;
-  // Add origin image for example
-  objs->image.height = image_msg->height;
-  objs->image.width = image_msg->width;
-  objs->image.encoding = image_msg->encoding;
-  objs->image.step = image_msg->step;
-  objs->image.data = image_msg->data;
-
   objs->inference_time_ms = result->time_taken;
-  // objs->fps = 1000.0 / std::chrono::duration_cast<std::chrono::milliseconds>
-  // (end - start).count();
-  // RCLCPP_INFO(this->get_logger(), "Total time: %fms", 1000.0 / objs->fps);
-  // RCLCPP_INFO(this->get_logger(), "Inference time: %fms", objs_in_boxes->inference_time_ms);
   pub_classified_objects_->publish(objs);
 }
 
 void NCSComposition::cbDetect(const sensor_msgs::msg::Image::SharedPtr image_msg)
 {
-  // cv_bridge::toCvCopy(image_msg, "bgr8")->image;
-  cv::Mat frame(image_msg->height, image_msg->width, encoding2mat_type(image_msg->encoding),
-    const_cast<unsigned char *>(image_msg->data.data()), image_msg->step);
-  cv::Mat cameraData;
-  if (image_msg->encoding == "rgb8") {
-    cv::cvtColor(frame, cameraData, cv::COLOR_RGB2BGR);
-  } else {
-    cameraData = frame;
-  }
-  // std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+  cv::Mat cameraData = cv_bridge::toCvCopy(image_msg, "bgr8")->image;
   ncs_handle_->loadTensor(cameraData);
   ncs_handle_->detect();
   DetectionResultPtr result = ncs_handle_->getDetectionResult();
-  // std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
   auto objs_in_boxes = std::make_shared<object_msgs::msg::ObjectsInBoxes>();
 
   for (auto item : result->items_in_boxes) {
@@ -233,18 +182,7 @@ void NCSComposition::cbDetect(const sensor_msgs::msg::Image::SharedPtr image_msg
   }
 
   objs_in_boxes->header = image_msg->header;
-  // Add origin image for example
-  objs_in_boxes->image.height = image_msg->height;
-  objs_in_boxes->image.width = image_msg->width;
-  objs_in_boxes->image.encoding = image_msg->encoding;
-  objs_in_boxes->image.step = image_msg->step;
-  objs_in_boxes->image.data = image_msg->data;
-
   objs_in_boxes->inference_time_ms = result->time_taken;
-  // objs_in_boxes->fps =
-  //    1000.0 / std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
-  // RCLCPP_INFO(this->get_logger(), "Total time: %fms", 1000.0 / objs_in_boxes->fps);
-  // RCLCPP_INFO(this->get_logger(), "Inference time: %fms", objs_in_boxes->inference_time_ms);
   pub_detected_objects_->publish(objs_in_boxes);
 }
 }  // namespace movidius_ncs_stream
