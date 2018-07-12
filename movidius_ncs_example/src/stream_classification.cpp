@@ -12,78 +12,87 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <string>
+
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <cv_bridge/cv_bridge.h>
+#include <message_filters/subscriber.h>
+#include <message_filters/time_synchronizer.h>
+#include <object_msgs/msg/objects.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <rclcpp/rclcpp.hpp>
-#include <object_msgs/msg/objects.hpp>
-#include <string>
 
 #define LINESPACING 20
 
-int encoding2mat_type(const std::string & encoding)
+class ClassificationShow : public rclcpp::Node
 {
-  if (encoding == "mono8") {
-    return CV_8UC1;
-  } else if (encoding == "bgr8") {
-    return CV_8UC3;
-  } else if (encoding == "mono16") {
-    return CV_16SC1;
-  } else if (encoding == "rgba8") {
-    return CV_8UC4;
-  } else if (encoding == "bgra8") {
-    return CV_8UC4;
-  } else if (encoding == "32FC1") {
-    return CV_32FC1;
-  } else if (encoding == "rgb8") {
-    return CV_8UC3;
-  } else {
-    throw std::runtime_error("Unsupported encoding type");
+public:
+  ClassificationShow()
+  : Node("classification_show")
+  {
+    cam_sub_ = std::make_unique<camSub>(this, "/camera/color/image_raw");
+    obj_sub_ = std::make_unique<objSub>(this, "/movidius_ncs_stream/classified_objects");
+    sync_sub_ = std::make_unique<sync>(*cam_sub_, *obj_sub_, 10);
+    sync_sub_->registerCallback(&ClassificationShow::showImage, this);
   }
-}
 
-void show_image(const object_msgs::msg::Objects::SharedPtr & msg)
-{
-  cv::Mat frame(msg->image.height, msg->image.width, encoding2mat_type(msg->image.encoding),
-    const_cast<unsigned char *>(msg->image.data.data()), msg->image.step);
+private:
+  using camSub = message_filters::Subscriber<sensor_msgs::msg::Image>;
+  using objSub = message_filters::Subscriber<object_msgs::msg::Objects>;
+  using sync = message_filters::TimeSynchronizer<sensor_msgs::msg::Image, object_msgs::msg::Objects>;
+  std::unique_ptr<camSub> cam_sub_;
+  std::unique_ptr<objSub> obj_sub_;
+  std::unique_ptr<sync> sync_sub_;
 
-  cv::Mat cvframe;
-  if (msg->image.encoding == "rgb8") {
-    cv::Mat frame2;
-    cv::cvtColor(frame, frame2, cv::COLOR_RGB2BGR);
-    cvframe = frame2;
-  } else {
-    cvframe = frame;
+  int getFPS()
+  {
+    static int fps = 0;
+    static boost::posix_time::ptime duration_start = boost::posix_time::microsec_clock::local_time();
+    static int frame_cnt = 0;
+
+    frame_cnt++;
+
+    boost::posix_time::ptime current = boost::posix_time::microsec_clock::local_time();
+    boost::posix_time::time_duration msdiff = current - duration_start;
+
+    if (msdiff.total_milliseconds() > 1000)
+    {
+      fps = frame_cnt;
+      frame_cnt = 0;
+      duration_start = current;
+    }
+
+    return fps;
   }
-  int cnt = 0;
 
-  for (auto obj : msg->objects_vector) {
+  void showImage(const sensor_msgs::msg::Image::SharedPtr & img, const object_msgs::msg::Objects::SharedPtr & objs)
+  {
+    cv::Mat cvImage = cv_bridge::toCvShare(img, "bgr8")->image;
+    int cnt = 0;
+
+    for (auto obj : objs->objects_vector) {
+      std::stringstream ss;
+      ss << obj.object_name << ": " << obj.probability * 100 << '%';
+      cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING * (++cnt)),
+	cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0));
+    }
+
     std::stringstream ss;
-    ss << obj.object_name << ": " << obj.probability * 100 << '%';
-    cv::putText(cvframe, ss.str(), cvPoint(LINESPACING, LINESPACING * (++cnt)),
+    int fps = getFPS();
+    ss << "FPS: " << fps;
+    cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING * (++cnt)),
       cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0));
-  }
 
-  // std::stringstream ss;
-  // ss << "FPS: " << msg->fps;
-  // cv::putText(cvframe, ss.str(), cvPoint(LINESPACING, LINESPACING * (++cnt)),
-  //             cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0));
-  cv::imshow("image_viewer", cvframe);
-  cv::waitKey(5);
-}
+    cv::imshow("image_viewer", cvImage);
+    cv::waitKey(5);
+  }
+};
 
 int main(int argc, char ** argv)
 {
   rclcpp::init(argc, argv);
-
-  auto node = rclcpp::Node::make_shared("movidius_ncs_example");
-
-  // Initialize a subscriber that will receive the ROS Image message to be displayed.
-  auto sub = node->create_subscription<object_msgs::msg::Objects>(
-    "/movidius_ncs_stream/classified_objects",
-    [](const object_msgs::msg::Objects::SharedPtr msg) -> void {show_image(msg);});
-
-  rclcpp::spin(node);
-
+  rclcpp::spin(std::make_shared<ClassificationShow>());
   rclcpp::shutdown();
   return 0;
 }

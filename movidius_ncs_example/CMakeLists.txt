@@ -20,6 +20,8 @@ find_package(rclcpp REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(object_msgs REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(message_filters REQUIRED)
+find_package(cv_bridge REQUIRED)
 
 add_executable(${PROJECT_NAME}_image_detection src/image_detection.cpp)
 ament_target_dependencies(${PROJECT_NAME}_image_detection
@@ -37,13 +39,17 @@ add_executable(${PROJECT_NAME}_stream_detection src/stream_detection.cpp)
 ament_target_dependencies(${PROJECT_NAME}_stream_detection
   "rclcpp"
   "object_msgs"
-  "OpenCV")
+  "OpenCV"
+  "message_filters"
+  "cv_bridge")
 
 add_executable(${PROJECT_NAME}_stream_classification src/stream_classification.cpp)
 ament_target_dependencies(${PROJECT_NAME}_stream_classification
   "rclcpp"
   "object_msgs"
-  "OpenCV")
+  "OpenCV"
+  "message_filters"
+  "cv_bridge")
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
