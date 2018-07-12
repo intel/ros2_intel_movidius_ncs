@@ -11,15 +11,15 @@ This project is a ROS2 wrapper for NC API of [NCSDK](https://movidius.github.io/
   
 ## 2 Prerequisite
 * An x86_64 computer running Ubuntu 16.04. OS X and Windows are not supported yet
-* ROS2 Ardent
+* ROS2 Bouncy
 * Movidius Neural Compute Stick (NCS)
 * Movidius Neural Compute (MvNC) SDK
 * Movidius Neural Compute Application Zoo
 * RGB Camera, e.g. RealSense D400 Series
 
 ## 3 Environment Setup
-* Install ROS2 ([guide](https://github.com/ros2/ros2/wiki/Linux-Development-Setup)) 
-* Create a ROS2 ament workspace
+* Install ROS2 ([guide](https://github.com/ros2/ros2/wiki/Linux-Install-Debians))
+* Create a ROS2 workspace
 ```Shell
 mkdir -p ~/ros2_ws/src
 ```
@@ -32,9 +32,22 @@ sudo ln -s <your-workspace>/ncappzoo /opt/movidius/ncappzoo
 After that, make sure you can find graph data in ```/opt/movidius/ncappzoo/caffe``` or ```/opt/movidius/ncappzoo/tensorflow``` and image data in ```/opt/movidius/ncappzoo/data/images```
 * Install object_msgs for ROS2 ([github](https://github.com/intel/ros2_object_msgs))
 * Install ROS2 package for different cameras as needed. e.g.
-  1. RealSense D400 series camera ([github](https://github.com/intel/ros2_intel_realsense))   
+  1. RealSense D400 series camera ([github](https://github.com/intel/ros2_intel_realsense))
    **Note**: Create a symbol link from libusb.a to libusb-1.0.a, otherwise "libusb.a" is probably not to be found by librealsense.  
     ```sudo ln -s /usr/lib/x86_64-linux-gnu/libusb-1.0.a /usr/lib/libusb.a```
+* Install ROS2 Message Filters ([github](https://github.com/intel/ros2_message_filters))
+```Shell
+cd ~/ros2_ws/src
+git clone https://github.com/intel/ros2_message_filters
+```
+* Install ROS2 vision_opencv ([github](https://github.com/ros-perception/vision_opencv))
+```Shell
+cd ~/ros2_ws/src
+git clone https://https://github.com/ros-perception/vision_opencv
+cd vision_opencv
+git checkout ros2
+```
+       
 ## 4 Building and Installation
 ```Shell
 cd ~/ros2_ws/src
