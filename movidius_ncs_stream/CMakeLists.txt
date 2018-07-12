@@ -35,6 +35,7 @@ ament_target_dependencies(${PROJECT_NAME}
   "ament_index_cpp"
   "class_loader"
   "rclcpp"
+  "test_rclcpp"
   "rviz_yaml_cpp_vendor"
   "sensor_msgs"
   "movidius_ncs_lib"
@@ -42,11 +43,6 @@ ament_target_dependencies(${PROJECT_NAME}
   "OpenCV"
   "cv_bridge")
 rclcpp_register_node_plugins(${PROJECT_NAME} "movidius_ncs_stream::NCSComposition")
-
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
-endif()
 
 # Flags
 if(UNIX OR APPLE)
@@ -97,5 +93,37 @@ install(TARGETS ${PROJECT_NAME}
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
 )
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  find_package(rclcpp REQUIRED)
+  find_package(std_msgs REQUIRED)
+  find_package(object_msgs REQUIRED)
+  find_package(movidius_ncs_lib REQUIRED)
+  find_package(ament_index_cpp REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+
+  macro(custom_gtest target)
+    ament_add_gtest(${target} ${ARGN})
+    if(TARGET ${target})
+      target_include_directories(${target} PUBLIC
+        ${${PROJECT_NAME}_INCLUDE_DIRS})
+      ament_target_dependencies(${target}
+        "rclcpp"
+        "object_msgs"
+        "ament_index_cpp"
+        "movidius_ncs_lib")
+    endif()
+  endmacro()
+
+  macro(targets)
+    custom_gtest(unittest_stream
+      "tests/unittest_stream.cpp"
+      TIMEOUT 100)
+  endmacro()
+
+  call_for_each_rmw_implementation(targets)
+
+endif()
 
 ament_package()
