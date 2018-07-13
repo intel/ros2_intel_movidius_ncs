@@ -18,13 +18,14 @@ project(movidius_ncs_lib)
 find_package(ament_cmake REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(rviz_yaml_cpp_vendor REQUIRED)
+find_package(rclcpp REQUIRED)
 
 find_path(MVNC_HEADER_FILE
           mvnc.h
           PATHS ENV ROS_ROOT)
 if(NOT MVNC_HEADER_FILE)
   message(FATAL_ERROR "Can't find mvnc.h, please install Movidius NCS SDK according to
-          https://github.com/movidius/ncsdk")
+          https://developer.movidius.com/start/software-setup")
 endif()
 
 include_directories(include
@@ -48,11 +49,6 @@ ament_target_dependencies(${PROJECT_NAME}
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
-
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
-endif()
 
 # Flags
 if(UNIX OR APPLE)
@@ -92,23 +88,11 @@ if(UNIX OR APPLE)
   set(CUDA_PROPAGATE_HOST_FLAGS OFF)
   set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -D_FORTIFY_SOURCE=2")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pie")
-endif()
 
-# Add x86 intrinsic compiler support
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
-execute_process(
-    COMMAND bash -c "lscpu | grep -qi flags | grep -qi flags | grep -qi f16c"
-    RESULT_VARIABLE SUPPORT_F16C)
-if(SUPPORT_F16C EQUAL 0)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mf16c")
-  add_definitions(-DSUPPORT_MF16C)
-endif()
-
-execute_process(
-    COMMAND bash -c "lscpu | grep -qi flags | grep -qi flags | grep -qi sse4_1"
-    RESULT_VARIABLE SUPPORT_SSE41)
-if(SUPPORT_SSE41 EQUAL 0)
+  # Add x86 intrinsic compiler support
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mf16c")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 endif()
 
 # Install nodelet library
@@ -123,5 +107,18 @@ install(DIRECTORY include/
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+  ament_add_gtest(unittest_environment tests/unittest_environment.cpp)
+  if(TARGET unittest_environment)
+    target_include_directories(unittest_environment PUBLIC
+      ${${PROJECT_NAME}_INCLUDE_DIRS}
+    )
+    ament_target_dependencies(unittest_environment
+    rclcpp)
+  endif()
+endif()
 
 ament_package()
