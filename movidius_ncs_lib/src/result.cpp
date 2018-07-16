@@ -20,7 +20,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-
+#include <math.h>
 
 namespace movidius_ncs_lib
 {
