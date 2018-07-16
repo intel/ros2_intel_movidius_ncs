@@ -12,16 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <string>
-
-#include <boost/date_time/posix_time/posix_time.hpp>
 #include <cv_bridge/cv_bridge.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <object_msgs/msg/objects.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <rclcpp/rclcpp.hpp>
+
+#include <memory>
+#include <string>
 
 #define LINESPACING 20
 
@@ -40,7 +41,8 @@ public:
 private:
   using camSub = message_filters::Subscriber<sensor_msgs::msg::Image>;
   using objSub = message_filters::Subscriber<object_msgs::msg::Objects>;
-  using sync = message_filters::TimeSynchronizer<sensor_msgs::msg::Image, object_msgs::msg::Objects>;
+  using sync =
+    message_filters::TimeSynchronizer<sensor_msgs::msg::Image, object_msgs::msg::Objects>;
   std::unique_ptr<camSub> cam_sub_;
   std::unique_ptr<objSub> obj_sub_;
   std::unique_ptr<sync> sync_sub_;
@@ -48,7 +50,8 @@ private:
   int getFPS()
   {
     static int fps = 0;
-    static boost::posix_time::ptime duration_start = boost::posix_time::microsec_clock::local_time();
+    static boost::posix_time::ptime duration_start =
+      boost::posix_time::microsec_clock::local_time();
     static int frame_cnt = 0;
 
     frame_cnt++;
@@ -56,8 +59,7 @@ private:
     boost::posix_time::ptime current = boost::posix_time::microsec_clock::local_time();
     boost::posix_time::time_duration msdiff = current - duration_start;
 
-    if (msdiff.total_milliseconds() > 1000)
-    {
+    if (msdiff.total_milliseconds() > 1000) {
       fps = frame_cnt;
       frame_cnt = 0;
       duration_start = current;
@@ -66,7 +68,9 @@ private:
     return fps;
   }
 
-  void showImage(const sensor_msgs::msg::Image::SharedPtr & img, const object_msgs::msg::Objects::SharedPtr & objs)
+  void showImage(
+    const sensor_msgs::msg::Image::SharedPtr & img,
+    const object_msgs::msg::Objects::SharedPtr & objs)
   {
     cv::Mat cvImage = cv_bridge::toCvShare(img, "bgr8")->image;
     int cnt = 0;
@@ -75,7 +79,7 @@ private:
       std::stringstream ss;
       ss << obj.object_name << ": " << obj.probability * 100 << '%';
       cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING * (++cnt)),
-	cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0));
+        cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0));
     }
 
     std::stringstream ss;
