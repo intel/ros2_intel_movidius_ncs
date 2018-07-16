@@ -14,13 +14,14 @@
 
 #include "movidius_ncs_lib/result.hpp"
 
-#include <boost/algorithm/string.hpp>
+#include <math.h>
 
+#include <boost/algorithm/string.hpp>
 #include <algorithm>
 #include <memory>
 #include <string>
 #include <vector>
-#include <math.h>
+
 
 namespace movidius_ncs_lib
 {
