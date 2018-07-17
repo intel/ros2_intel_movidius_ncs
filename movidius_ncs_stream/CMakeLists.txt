@@ -43,11 +43,6 @@ ament_target_dependencies(${PROJECT_NAME}
   "cv_bridge")
 rclcpp_register_node_plugins(${PROJECT_NAME} "movidius_ncs_stream::NCSComposition")
 
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
-endif()
-
 # Flags
 if(UNIX OR APPLE)
   # Linker flags.
@@ -97,5 +92,27 @@ install(TARGETS ${PROJECT_NAME}
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
 )
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  find_package(rclcpp REQUIRED)
+  find_package(std_msgs REQUIRED)
+  find_package(object_msgs REQUIRED)
+  find_package(movidius_ncs_lib REQUIRED)
+  find_package(ament_index_cpp REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+
+  ament_add_gtest(unittest_stream tests/unittest_stream.cpp)
+  if(TARGET unittest_stream)
+    target_include_directories(unittest_stream PUBLIC
+      ${${PROJECT_NAME}_INCLUDE_DIRS}
+    )
+    ament_target_dependencies(unittest_stream
+      rclcpp
+      object_msgs
+      ament_index_cpp
+      movidius_ncs_lib)
+  endif()
+endif()
 
 ament_package()
