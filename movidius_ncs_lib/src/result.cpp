@@ -74,14 +74,18 @@ void Result::parseYoloResult(
 
         if (obj_in_bbox.item.probability > prob_threshold) {
           obj_in_bbox.item.category = categories[std::distance(std::begin(probs), max_iter)];
-          obj_in_bbox.bbox.x =
+          int x_center =
             ((result[prob_num + bbox_conf_num + index * 4] + j) / 7.0) * img_width;
-          obj_in_bbox.bbox.y =
+          int y_center =
             ((result[prob_num + bbox_conf_num + index * 4 + 1] + i) / 7.0) * img_height;
           obj_in_bbox.bbox.width = (result[prob_num + bbox_conf_num + index * 4 + 2]) *
             (result[prob_num + bbox_conf_num + index * 4 + 2]) * img_width;
           obj_in_bbox.bbox.height = (result[prob_num + bbox_conf_num + index * 4 + 3]) *
             (result[prob_num + bbox_conf_num + index * 4 + 3]) * img_height;
+          obj_in_bbox.bbox.x = (x_center - 0.5 * obj_in_bbox.bbox.width) < 0 ?
+            0 : (x_center - 0.5 * obj_in_bbox.bbox.width);
+          obj_in_bbox.bbox.y = (y_center - 0.5 * obj_in_bbox.bbox.height) < 0 ?
+            0 : (y_center - 0.5 * obj_in_bbox.bbox.height);
           objs_in_bboxes->push_back(obj_in_bbox);
         }
       }
@@ -127,8 +131,8 @@ void Result::parseSSDResult(
       obj_in_bbox.item.probability = probability;
       obj_in_bbox.bbox.width = xmax - xmin;
       obj_in_bbox.bbox.height = ymax - ymin;
-      obj_in_bbox.bbox.x = xmin + 0.5 * obj_in_bbox.bbox.width;
-      obj_in_bbox.bbox.y = ymin + 0.5 * obj_in_bbox.bbox.height;
+      obj_in_bbox.bbox.x = xmin;
+      obj_in_bbox.bbox.y = ymin;
       objs_in_bboxes->push_back(obj_in_bbox);
     }
   }
@@ -195,18 +199,12 @@ void Result::NMS(ItemInBBoxArrayPtr objs_in_bboxes)
 
 float Result::IOU(ItemInBBox box1, ItemInBBox box2)
 {
-  int xmax = (box1.bbox.x + 0.5 * box1.bbox.width < box2.bbox.x + 0.5 * box2.bbox.width) ?
-    box1.bbox.x + 0.5 * box1.bbox.width :
-    box2.bbox.x + 0.5 * box2.bbox.width;
-  int xmin = (box1.bbox.x - 0.5 * box1.bbox.width > box2.bbox.x - 0.5 * box2.bbox.width) ?
-    box1.bbox.x - 0.5 * box1.bbox.width :
-    box2.bbox.x - 0.5 * box2.bbox.width;
-  int ymax = (box1.bbox.y + 0.5 * box1.bbox.height < box2.bbox.y + 0.5 * box2.bbox.height) ?
-    box1.bbox.y + 0.5 * box1.bbox.height :
-    box2.bbox.y + 0.5 * box2.bbox.height;
-  int ymin = (box1.bbox.y - 0.5 * box1.bbox.height > box2.bbox.y - 0.5 * box2.bbox.height) ?
-    box1.bbox.y - 0.5 * box1.bbox.height :
-    box2.bbox.y - 0.5 * box2.bbox.height;
+  int xmax = (box1.bbox.x + box1.bbox.width < box2.bbox.x + box2.bbox.width) ?
+    box1.bbox.x + box1.bbox.width : box2.bbox.x + box2.bbox.width;
+  int xmin = (box1.bbox.x > box2.bbox.x) ? box1.bbox.x : box2.bbox.x;
+  int ymax = (box1.bbox.y + box1.bbox.height < box2.bbox.y + box2.bbox.height) ?
+    box1.bbox.y + box1.bbox.height : box2.bbox.y + box2.bbox.height;
+  int ymin = (box1.bbox.y > box2.bbox.y) ? box1.bbox.y : box2.bbox.y;
   int inter_w = xmax - xmin;
   int inter_h = ymax - ymin;
   int inter_area = 0;

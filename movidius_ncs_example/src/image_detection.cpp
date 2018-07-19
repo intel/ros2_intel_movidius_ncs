@@ -67,15 +67,13 @@ int main(int argc, char ** argv)
         srv->objects.objects_vector[i].roi.x_offset, srv->objects.objects_vector[i].roi.y_offset,
         srv->objects.objects_vector[i].roi.width, srv->objects.objects_vector[i].roi.height);
 
-      int x = srv->objects.objects_vector[i].roi.x_offset;
-      int y = srv->objects.objects_vector[i].roi.y_offset;
+      int xmin = srv->objects.objects_vector[i].roi.x_offset;
+      int ymin = srv->objects.objects_vector[i].roi.y_offset;
       int w = srv->objects.objects_vector[i].roi.width;
       int h = srv->objects.objects_vector[i].roi.height;
 
-      int xmin = ((x - w / 2) > 0) ? (x - w / 2) : 0;
-      int xmax = ((x + w / 2) < width) ? (x + w / 2) : width;
-      int ymin = ((y - h / 2) > 0) ? (y - h / 2) : 0;
-      int ymax = ((y + h / 2) < height) ? (y + h / 2) : height;
+      int xmax = ((xmin + w) < width) ? (xmin + w) : width;
+      int ymax = ((ymin + h) < height) ? (ymin + h) : height;
 
       cv::Point left_top = cv::Point(xmin, ymin);
       cv::Point right_bottom = cv::Point(xmax, ymax);
