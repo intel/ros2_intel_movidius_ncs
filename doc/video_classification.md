@@ -1,5 +1,5 @@
 ## Classification for Video
-This project supports multiple CNN models for classification. Please make sure you have already [set up environment](https://github.com/intel/ros2_intel_movidius_ncs/tree/master#3-environment-setup) and [installed this project](https://github.com/intel/ros2_intel_movidius_ncs/tree/master#4-building-and-installation) correctly. You can refer to the following links for your interested models then.  
+This project supports multiple CNN models for classification. Please make sure you have already [set up environment](https://github.com/intel/ros2_intel_movidius_ncs/tree/devel#3-environment-setup) and [installed this project](https://github.com/intel/ros2_intel_movidius_ncs/tree/devel#4-building-and-installation) correctly. You can refer to the following links for your interested models then.  
 #### [1 CNN Models](#1-cnn-models-1)
 * [AlexNet](#alexnet)
 * [GoogLeNet](#googlenet)
@@ -24,9 +24,8 @@ Launch video streaming nodelet.
 - Option 1: RealSense
 ```Shell
 # Choose CNN model
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo -e "param_file: alexnet.yaml\ninput_topic: /camera/color/image_raw" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 # Terminal 1, run realsense camera
 realsense_ros2_camera
@@ -38,9 +37,8 @@ launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/nc
 - Option 2: Astra
 ```Shell
 # Choose CNN model
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo -e "param_file: alexnet.yaml\ninput_topic: /image" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 # Terminal 1, run astra camera
 ros2 run astra_camera astra_camera_node -w 640 -h 480 -I -D
@@ -63,9 +61,8 @@ Launch video streaming nodelet.
 - Option 1: RealSense
 ```Shell
 # Choose CNN model
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo -e "param_file: googlenet.yaml\ninput_topic: /camera/color/image_raw" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 # Terminal 1, run realsense camera
 realsense_ros2_camera
@@ -77,9 +74,8 @@ launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/nc
 - Option 2: Astra
 ```Shell
 # Choose CNN model
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo -e "param_file: googlenet.yaml\ninput_topic: /image" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 # Terminal 1, run astra camera
 ros2 run astra_camera astra_camera_node -w 640 -h 480 -I -D
@@ -102,9 +98,8 @@ Launch video streaming nodelet.
 - Option 1: RealSense
 ```Shell
 # Choose CNN model
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo -e "param_file: squeezenet.yaml\ninput_topic: /camera/color/image_raw" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 # Terminal 1, run realsense camera
 realsense_ros2_camera
@@ -116,9 +111,8 @@ launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/nc
 - Option 2: Astra
 ```Shell
 # Choose CNN model
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo -e "param_file: squeezenet.yaml\ninput_topic: /image" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 # Terminal 1, run astra camera
 ros2 run astra_camera astra_camera_node -w 640 -h 480 -I -D
@@ -141,9 +135,8 @@ Launch video streaming nodelet.
 - Option 1: RealSense
 ```Shell
 # Choose CNN model
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo -e "param_file: inception_v1.yaml\ninput_topic: /camera/color/image_raw" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 # Terminal 1, run realsense camera
 realsense_ros2_camera
@@ -155,9 +148,8 @@ launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/nc
 - Option 2: Astra
 ```Shell
 # Choose CNN model
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo -e "param_file: inception_v1.yaml\ninput_topic: /image" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 # Terminal 1, run astra camera
 ros2 run astra_camera astra_camera_node -w 640 -h 480 -I -D
@@ -180,9 +172,8 @@ Launch video streaming nodelet.
 - Option 1: RealSense
 ```Shell
 # Choose CNN model
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo -e "param_file: inception_v2.yaml\ninput_topic: /camera/color/image_raw" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 # Terminal 1, run realsense camera
 realsense_ros2_camera
@@ -194,9 +185,8 @@ launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/nc
 - Option 2: Astra
 ```Shell
 # Choose CNN model
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo -e "param_file: inception_v2.yaml\ninput_topic: /image" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 # Terminal 1, run astra camera
 ros2 run astra_camera astra_camera_node -w 640 -h 480 -I -D
@@ -219,9 +209,8 @@ Launch video streaming nodelet.
 - Option 1: RealSense
 ```Shell
 # Choose CNN model
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo -e "param_file: inception_v3.yaml\ninput_topic: /camera/color/image_raw" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 # Terminal 1, run realsense camera
 realsense_ros2_camera
@@ -233,9 +222,8 @@ launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/nc
 - Option 2: Astra
 ```Shell
 # Choose CNN model
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo -e "param_file: inception_v3.yaml\ninput_topic: /image" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 # Terminal 1, run astra camera
 ros2 run astra_camera astra_camera_node -w 640 -h 480 -I -D
@@ -258,9 +246,8 @@ Launch video streaming nodelet.
 - Option 1: RealSense
 ```Shell
 # Choose CNN model
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo -e "param_file: inception_v4.yaml\ninput_topic: /camera/color/image_raw" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 # Terminal 1, run realsense camera
 realsense_ros2_camera
@@ -272,9 +259,8 @@ launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/nc
 - Option 2: Astra
 ```Shell
 # Choose CNN model
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo -e "param_file: inception_v4.yaml\ninput_topic: /image" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 # Terminal 1, run astra camera
 ros2 run astra_camera astra_camera_node -w 640 -h 480 -I -D
@@ -297,9 +283,8 @@ Launch video streaming nodelet.
 - Option 1: RealSense
 ```Shell
 # Choose CNN model
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo -e "param_file: mobilenet.yaml\ninput_topic: /camera/color/image_raw" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 # Terminal 1, run realsense camera
 realsense_ros2_camera
@@ -311,9 +296,8 @@ launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/nc
 - Option 2: Astra
 ```Shell
 # Choose CNN model
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo -e "param_file: mobilenet.yaml\ninput_topic: /image" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 # Terminal 1, run astra camera
 ros2 run astra_camera astra_camera_node -w 640 -h 480 -I -D
