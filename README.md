@@ -18,7 +18,8 @@ This project is a ROS2 wrapper for NC API of [NCSDK](https://movidius.github.io/
 * RGB Camera, e.g. RealSense D400 Series
 
 ## 3 Environment Setup
-* Install ROS2 ([guide](https://github.com/ros2/ros2/wiki/Linux-Install-Debians))
+* Install OpenCV 3.x ([guide](https://docs.opencv.org/3.3.0/d7/d9f/tutorial_linux_install.html))
+* Install ROS2 Ardent ([guide](https://github.com/ros2/ros2/wiki/Linux-Install-Debians))
 * Create a ROS2 workspace
 ```Shell
 mkdir -p ~/ros2_ws/src
@@ -37,6 +38,8 @@ After that, make sure you can find graph data in ```/opt/movidius/ncappzoo/caffe
     ```sudo ln -s /usr/lib/x86_64-linux-gnu/libusb-1.0.a /usr/lib/libusb.a```
 * Install ROS2 Message Filters ([github](https://github.com/intel/ros2_message_filters))
 ```Shell
+cd /usr/lib/x86_64-linux-gnu
+sudo ln -s libboost_python-py35.so libboost_python3.so
 cd ~/ros2_ws/src
 git clone https://github.com/intel/ros2_message_filters
 ```
