@@ -96,13 +96,13 @@ TEST(UnitTestImage, testImage) {
 
     EXPECT_TRUE(srv->objects.objects_vector.size());
     EXPECT_EQ(srv->objects.objects_vector[0].object.object_name, "bicycle");
-    EXPECT_TRUE(srv->objects.objects_vector[0].roi.x_offset > 360 &&
-      srv->objects.objects_vector[0].roi.x_offset < 375 &&
-      srv->objects.objects_vector[0].roi.y_offset > 265 &&
-      srv->objects.objects_vector[0].roi.y_offset < 280 &&
-      srv->objects.objects_vector[0].roi.width > 460 &&
-      srv->objects.objects_vector[0].roi.width < 475 &&
-      srv->objects.objects_vector[0].roi.height > 345 &&
+    EXPECT_TRUE(srv->objects.objects_vector[0].roi.x_offset > 130 &&
+      srv->objects.objects_vector[0].roi.x_offset < 150 &&
+      srv->objects.objects_vector[0].roi.y_offset > 90 &&
+      srv->objects.objects_vector[0].roi.y_offset < 110 &&
+      srv->objects.objects_vector[0].roi.width > 410 &&
+      srv->objects.objects_vector[0].roi.width < 470 &&
+      srv->objects.objects_vector[0].roi.height > 340 &&
       srv->objects.objects_vector[0].roi.height < 360);
   } else {
     auto node = rclcpp::Node::make_shared("movidius_ncs_image_tests");
