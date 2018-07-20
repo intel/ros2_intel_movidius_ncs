@@ -46,7 +46,7 @@ git clone https://github.com/intel/ros2_message_filters
 * Install ROS2 vision_opencv ([github](https://github.com/ros-perception/vision_opencv))
 ```Shell
 cd ~/ros2_ws/src
-git clone https://https://github.com/ros-perception/vision_opencv
+git clone https://github.com/ros-perception/vision_opencv
 cd vision_opencv
 git checkout ros2
 ```
