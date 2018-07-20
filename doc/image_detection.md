@@ -1,5 +1,5 @@
 ## Detection for Image
-This project supports multiple CNN models for detection. Please make sure you have already [set up environment](https://github.com/intel/ros2_intel_movidius_ncs/tree/master#3-environment-setup) and [installed this project](https://github.com/intel/ros2_intel_movidius_ncs/tree/master#4-building-and-installation) correctly. You can refer to the following links for your interested models then.  
+This project supports multiple CNN models for detection. Please make sure you have already [set up environment](https://github.com/intel/ros2_intel_movidius_ncs/tree/devel#3-environment-setup) and [installed this project](https://github.com/intel/ros2_intel_movidius_ncs/tree/devel#4-building-and-installation) correctly. You can refer to the following links for your interested models then.  
 #### [1 CNN Models](#1-cnn-models-1)
 * [MobileNet_SSD](#mobilenet_ssd)
 * [TinyYolo_V1](#tinyyolo_v1)
@@ -15,9 +15,8 @@ make
 ```
 Launch object detection service.
 ```Shell
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo "param_file: mobilenetssd.yaml" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/ncs_image_launch.py
 ```
@@ -33,9 +32,8 @@ make
 ```
 Launch object detection service.
 ```Shell
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo "param_file: tinyyolo_v1.yaml" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/ncs_image_launch.py
 ```
