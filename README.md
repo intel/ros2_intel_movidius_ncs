@@ -61,8 +61,8 @@ git checkout ros2
 cd ~/ros2_overlay_ws/src
 git clone https://github.com/intel/ros2_intel_movidius_ncs
 git clone https://github.com/intel/ros2_object_msgs
-cd ~/ros2_overlay_ws/src
-colcon build --syslink-install
+cd ~/ros2_overlay_ws/
+colcon build --symlink-install
 source install/local_setup.bash
 ```
 Copy object label file from this project to NCSDK installation location.
