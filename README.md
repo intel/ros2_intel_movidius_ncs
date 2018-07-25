@@ -18,7 +18,7 @@ This project is a ROS2 wrapper for NC API of [NCSDK](https://movidius.github.io/
 * RGB Camera, e.g. RealSense D400 Series
 
 ## 3 Environment Setup
-* Install OpenCV 3.x ([guide](https://github.com/chaoli2/ros2_intel_movidius_ncs))
+* Install OpenCV 3.x ([guide](https://docs.opencv.org/3.3.0/d7/d9f/tutorial_linux_install.html))
 * Build ROS2 Core from source ([guide](https://github.com/ros2/ros2/wiki/Linux-Development-Setup))
 * Create a ROS2 overlay workspace
 ```Shell
