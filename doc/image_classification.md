@@ -1,5 +1,5 @@
 ## Classification for Image
-This project supports multiple CNN models for classification. Please make sure you have already [set up environment](https://github.com/intel/ros2_intel_movidius_ncs/tree/master#3-environment-setup) and [installed this project](https://github.com/intel/ros2_intel_movidius_ncs/tree/master#4-building-and-installation) correctly. You can refer to the following links for your interested models then.   
+This project supports multiple CNN models for classification. Please make sure you have already [set up environment](https://github.com/intel/ros2_intel_movidius_ncs/tree/devel#3-environment-setup) and [installed this project](https://github.com/intel/ros2_intel_movidius_ncs/tree/devel#4-building-and-installation) correctly. You can refer to the following links for your interested models then.   
 #### [1 CNN Models](#1-cnn-models-1)
 * [AlexNet](#alexnet)
 * [GoogleNet](#googlenet)
@@ -21,9 +21,8 @@ make
 ```
 Launch object classification service.
 ```Shell
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo "param_file: alexnet.yaml" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/ncs_image_launch.py
 ```
@@ -39,9 +38,8 @@ make
 ```
 Launch object classification service.
 ```Shell
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo "param_file: googlenet.yaml" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/ncs_image_launch.py
 ```
@@ -57,9 +55,8 @@ make
 ```
 Launch object classification service.
 ```Shell
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo "param_file: squeezenet.yaml" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/ncs_image_launch.py
 ```
@@ -75,9 +72,8 @@ make
 ```
 Launch object classification service.
 ```Shell
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo "param_file: inception_v1.yaml" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/ncs_image_launch.py
 ```
@@ -93,9 +89,8 @@ make
 ```
 Launch object classification service.
 ```Shell
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo "param_file: inception_v2.yaml" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/ncs_image_launch.py
 ```
@@ -111,9 +106,8 @@ make
 ```
 Launch object classification service.
 ```Shell
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo "param_file: inception_v3.yaml" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/ncs_image_launch.py
 ```
@@ -129,9 +123,8 @@ make
 ```
 Launch object classification service.
 ```Shell
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo "param_file: inception_v4.yaml" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/ncs_image_launch.py
 ```
@@ -147,9 +140,8 @@ make
 ```
 Launch object classification service.
 ```Shell
-cd ~/ros2_ws
+cd ~/ros2_overlay_ws
 echo "param_file: mobilenet.yaml" > src/ros2_intel_movidius_ncs/movidius_ncs_launch/config/default.yaml
-ament build
 source install/local_setup.bash
 launch `ros2 pkg prefix movidius_ncs_launch`/share/movidius_ncs_launch/launch/ncs_image_launch.py
 ```
