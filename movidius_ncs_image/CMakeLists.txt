@@ -22,6 +22,7 @@ find_package(sensor_msgs REQUIRED)
 find_package(object_msgs REQUIRED)
 find_package(movidius_ncs_lib REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(cv_bridge REQUIRED)
 
 include_directories(include)
 
@@ -32,7 +33,8 @@ ament_target_dependencies(${PROJECT_NAME}
   "sensor_msgs"
   "movidius_ncs_lib"
   "object_msgs"
-  "OpenCV")
+  "OpenCV"
+  "cv_bridge")
 
 # Flags
 if(UNIX OR APPLE)
