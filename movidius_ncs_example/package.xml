@@ -19,7 +19,6 @@ limitations under the License.
   <name>movidius_ncs_example</name>
   <version>0.3.0</version>
   <description>The example package</description>
-  <author email="xiaojun.huang@intel.com">Xiaojun Huang</author>
   <maintainer email="xiaojun.huang@intel.com">Xiaojun Huang</maintainer>
   <maintainer email="chao1.li@intel.com">Chao Li</maintainer>
 
@@ -41,7 +40,7 @@ limitations under the License.
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
-  
+
   <export>
     <build_type>ament_cmake</build_type>
   </export>
