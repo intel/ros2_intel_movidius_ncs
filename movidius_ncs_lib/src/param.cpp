@@ -32,7 +32,8 @@ void operator>>(const YAML::Node & node, T & i)
 }
 
 Param::Param()
-: device_index_(0),
+: max_device_count_(0),
+  start_device_index_(0),
   log_level_(Device::Errors), cnn_type_(""),
   graph_file_path_(""),
   category_file_path_(""),
@@ -54,11 +55,17 @@ bool Param::loadParamFromYAML(const std::string & file_path)
   }
 
   YAML::Node doc = YAML::Load(fin);
+  try {
+    doc["max_device_count"] >> max_device_count_;
+  } catch (YAML::InvalidScalar) {
+    ROS_ERROR("The YAML file does not contain a max_device_count tag or it is invalid.");
+    return false;
+  }
 
   try {
-    doc["device_index"] >> device_index_;
+    doc["start_device_index"] >> start_device_index_;
   } catch (YAML::InvalidScalar) {
-    ROS_ERROR("The YAML file does not contain a device_index tag or it is invalid.");
+    ROS_ERROR("The YAML file does not contain a start_device_index tag or it is invalid.");
     return false;
   }
 
@@ -131,6 +138,7 @@ bool Param::loadParamFromYAML(const std::string & file_path)
     ROS_ERROR("The YAML file does not contain a scale tag or it is invalid.");
     return false;
   }
+
   return true;
 }
 
@@ -138,13 +146,21 @@ bool Param::validateParam()
 {
   ROS_DEBUG("NCSImpl get parameters");
 
-  if (device_index_ < 0) {
-    ROS_ERROR_STREAM("invalid param device_index = " << device_index_);
+  if (max_device_count_ < 0) {
+    ROS_ERROR_STREAM("invalid param max_device_count = " << max_device_count_);
     throw std::exception();
     return false;
   }
 
-  ROS_INFO_STREAM("use device_index = " << device_index_);
+  ROS_INFO_STREAM("use max_device_count = " << max_device_count_);
+
+  if (start_device_index_ < 0) {
+    ROS_ERROR_STREAM("invalid param start_device_index = " << start_device_index_);
+    throw std::exception();
+    return false;
+  }
+
+  ROS_INFO_STREAM("use start_device_index = " << start_device_index_);
 
   if (log_level_ < Device::Nothing || log_level_ > Device::Verbose) {
     ROS_WARN_STREAM("invalid param log_level = " << log_level_);
@@ -210,6 +226,8 @@ bool Param::validateParam()
   }
 
   ROS_INFO_STREAM("use scale = " << scale_);
+
+  std::cout << "end validate yaml" << std::endl;
   return true;
 }
 }  // namespace movidius_ncs_lib
