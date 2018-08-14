@@ -15,15 +15,13 @@
 #ifndef MOVIDIUS_NCS_IMAGE__NCS_SERVER_HPP_
 #define MOVIDIUS_NCS_IMAGE__NCS_SERVER_HPP_
 
-#include <rclcpp/rclcpp.hpp>
 #include <object_msgs/srv/classify_object.hpp>
 #include <object_msgs/srv/detect_object.hpp>
-
+#include <rclcpp/rclcpp.hpp>
 #include <memory>
 #include <string>
 #include <vector>
-
-#include "movidius_ncs_lib/ncs.hpp"
+#include "movidius_ncs_lib/ncs_manager.hpp"
 #include "movidius_ncs_lib/param.hpp"
 
 namespace movidius_ncs_image
@@ -46,10 +44,11 @@ private:
     const std::shared_ptr<object_msgs::srv::DetectObject::Request> request,
     std::shared_ptr<object_msgs::srv::DetectObject::Response> response);
 
-  rclcpp::Service<object_msgs::srv::ClassifyObject>::SharedPtr service_classify_;
+  rclcpp::Service<object_msgs::srv::ClassifyObject>::SharedPtr
+    service_classify_;
   rclcpp::Service<object_msgs::srv::DetectObject>::SharedPtr service_detect_;
 
-  std::shared_ptr<movidius_ncs_lib::NCS> ncs_handle_;
+  std::shared_ptr<movidius_ncs_lib::NCSManager> ncs_manager_handle_;
 
   movidius_ncs_lib::Param::Ptr param_;
 };

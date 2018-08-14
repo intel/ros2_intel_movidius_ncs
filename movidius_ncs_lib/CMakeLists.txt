@@ -16,9 +16,12 @@ cmake_minimum_required(VERSION 3.5)
 project(movidius_ncs_lib)
 
 find_package(ament_cmake REQUIRED)
-find_package(OpenCV REQUIRED)
-find_package(rviz_yaml_cpp_vendor REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(OpenCV REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(object_msgs REQUIRED)
+find_package(rviz_yaml_cpp_vendor REQUIRED)
+find_package(cv_bridge REQUIRED)
 
 find_path(MVNC_HEADER_FILE
           mvnc.h
@@ -39,13 +42,16 @@ add_library(${PROJECT_NAME} SHARED
   src/graph.cpp
   src/tensor.cpp
   src/result.cpp
-  src/param.cpp)
+  src/param.cpp
+  src/ncs_manager.cpp)
 target_link_libraries(${PROJECT_NAME}
   mvnc)
 
 ament_target_dependencies(${PROJECT_NAME}
   "rviz_yaml_cpp_vendor"
-  "OpenCV")
+  "OpenCV"
+  "object_msgs"
+  "cv_bridge")
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
@@ -99,6 +105,9 @@ if(SUPPORT_F16C EQUAL 0)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mf16c")
   add_definitions(-DSUPPORT_MF16C)
 endif()
+
+# Add OpenMP support
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 
 execute_process(
     COMMAND bash -c "lscpu | grep -qi flags | grep -qi flags | grep -qi sse4_1"

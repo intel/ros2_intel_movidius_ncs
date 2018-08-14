@@ -33,7 +33,8 @@ public:
   : Node("detection_show")
   {
     cam_sub_ = std::make_unique<camSub>(this, "/camera/color/image_raw");
-    obj_sub_ = std::make_unique<objSub>(this, "/movidius_ncs_stream/detected_objects");
+    obj_sub_ =
+      std::make_unique<objSub>(this, "/movidius_ncs_stream/detected_objects");
     sync_sub_ = std::make_unique<sync>(*cam_sub_, *obj_sub_, 10);
     sync_sub_->registerCallback(&DetectionShow::showImage, this);
   }
@@ -42,7 +43,8 @@ private:
   using camSub = message_filters::Subscriber<sensor_msgs::msg::Image>;
   using objSub = message_filters::Subscriber<object_msgs::msg::ObjectsInBoxes>;
   using sync =
-    message_filters::TimeSynchronizer<sensor_msgs::msg::Image, object_msgs::msg::ObjectsInBoxes>;
+    message_filters::TimeSynchronizer<sensor_msgs::msg::Image,
+      object_msgs::msg::ObjectsInBoxes>;
   std::unique_ptr<camSub> cam_sub_;
   std::unique_ptr<objSub> obj_sub_;
   std::unique_ptr<sync> sync_sub_;
@@ -56,7 +58,8 @@ private:
 
     frame_cnt++;
 
-    boost::posix_time::ptime current = boost::posix_time::microsec_clock::local_time();
+    boost::posix_time::ptime current =
+      boost::posix_time::microsec_clock::local_time();
     boost::posix_time::time_duration msdiff = current - duration_start;
 
     if (msdiff.total_milliseconds() > 1000) {
@@ -78,7 +81,8 @@ private:
 
     for (auto obj : objs->objects_vector) {
       std::stringstream ss;
-      ss << obj.object.object_name << ": " << obj.object.probability * 100 << '%';
+      ss << obj.object.object_name << ": " << obj.object.probability * 100 <<
+        '%';
 
       int xmin = obj.roi.x_offset;
       int ymin = obj.roi.y_offset;
@@ -90,17 +94,18 @@ private:
 
       cv::Point left_top = cv::Point(xmin, ymin);
       cv::Point right_bottom = cv::Point(xmax, ymax);
-      cv::rectangle(cvImage, left_top, right_bottom, cv::Scalar(0, 255, 0), 1, 8, 0);
-      cv::rectangle(cvImage, cvPoint(xmin, ymin), cvPoint(xmax, ymin + 20), cv::Scalar(0, 255, 0),
-        -1);
-      cv::putText(cvImage, ss.str(), cvPoint(xmin + 5, ymin + 20), cv::FONT_HERSHEY_PLAIN, 1,
-        cv::Scalar(0, 0, 255), 1);
+      cv::rectangle(cvImage, left_top, right_bottom, cv::Scalar(0, 255, 0), 1,
+        8, 0);
+      cv::rectangle(cvImage, cvPoint(xmin, ymin), cvPoint(xmax, ymin + 20),
+        cv::Scalar(0, 255, 0), -1);
+      cv::putText(cvImage, ss.str(), cvPoint(xmin + 5, ymin + 20),
+        cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 0, 255), 1);
     }
     std::stringstream ss;
     int fps = getFPS();
     ss << "FPS: " << fps;
-    cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING), cv::FONT_HERSHEY_PLAIN, 1,
-      cv::Scalar(0, 255, 0));
+    cv::putText(cvImage, ss.str(), cvPoint(LINESPACING, LINESPACING),
+      cv::FONT_HERSHEY_PLAIN, 1, cv::Scalar(0, 255, 0));
 
     cv::imshow("image_viewer", cvImage);
     cv::waitKey(5);
