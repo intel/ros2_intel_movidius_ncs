@@ -81,7 +81,7 @@ TEST(UnitTestImage, testImage) {
     auto request = std::make_shared<object_msgs::srv::DetectObject::Request>();
 
     std::string buffer = generate_file_path("data/images/bicycle.jpg");
-    request->image_path = buffer;
+    request->image_paths.push_back(buffer);
 
     if (!client->wait_for_service(std::chrono::seconds(20))) {
       ASSERT_TRUE(false) << "service not available after waiting";
@@ -94,23 +94,23 @@ TEST(UnitTestImage, testImage) {
 
     auto srv = result.get();
 
-    EXPECT_TRUE(srv->objects.objects_vector.size());
-    EXPECT_EQ(srv->objects.objects_vector[0].object.object_name, "bicycle");
-    EXPECT_TRUE(srv->objects.objects_vector[0].roi.x_offset > 130 &&
-      srv->objects.objects_vector[0].roi.x_offset < 150 &&
-      srv->objects.objects_vector[0].roi.y_offset > 90 &&
-      srv->objects.objects_vector[0].roi.y_offset < 110 &&
-      srv->objects.objects_vector[0].roi.width > 410 &&
-      srv->objects.objects_vector[0].roi.width < 470 &&
-      srv->objects.objects_vector[0].roi.height > 340 &&
-      srv->objects.objects_vector[0].roi.height < 360);
+    EXPECT_TRUE(srv->objects[0].objects_vector.size());
+    EXPECT_EQ(srv->objects[0].objects_vector[0].object.object_name, "bicycle");
+    EXPECT_TRUE(srv->objects[0].objects_vector[0].roi.x_offset > 130 &&
+      srv->objects[0].objects_vector[0].roi.x_offset < 150 &&
+      srv->objects[0].objects_vector[0].roi.y_offset > 90 &&
+      srv->objects[0].objects_vector[0].roi.y_offset < 110 &&
+      srv->objects[0].objects_vector[0].roi.width > 410 &&
+      srv->objects[0].objects_vector[0].roi.width < 470 &&
+      srv->objects[0].objects_vector[0].roi.height > 340 &&
+      srv->objects[0].objects_vector[0].roi.height < 360);
   } else {
     auto node = rclcpp::Node::make_shared("movidius_ncs_image_tests");
 
     auto client = node->create_client<object_msgs::srv::ClassifyObject>("movidius_ncs_image/"
         "classify_object");
     auto request = std::make_shared<object_msgs::srv::ClassifyObject::Request>();
-    request->image_path = "/opt/movidius/ncappzoo/data/images/cat.jpg";
+    request->image_paths.push_back("/opt/movidius/ncappzoo/data/images/cat.jpg");
 
     if (!client->wait_for_service(std::chrono::seconds(20))) {
       ASSERT_TRUE(false) << "service not available after waiting";
@@ -123,8 +123,8 @@ TEST(UnitTestImage, testImage) {
 
     auto srv = result.get();
 
-    EXPECT_TRUE(srv->objects.objects_vector.size());
-    EXPECT_TRUE(srv->objects.objects_vector[0].object_name.find("cat") != std::string::npos);
+    EXPECT_TRUE(srv->objects[0].objects_vector.size());
+    EXPECT_TRUE(srv->objects[0].objects_vector[0].object_name.find("cat") != std::string::npos);
   }
 }
 

@@ -27,13 +27,15 @@ add_executable(${PROJECT_NAME}_image_detection src/image_detection.cpp)
 ament_target_dependencies(${PROJECT_NAME}_image_detection
   "rclcpp"
   "object_msgs"
-  "OpenCV")
+  "OpenCV"
+  "cv_bridge")
 
 add_executable(${PROJECT_NAME}_image_classification src/image_classification.cpp)
 ament_target_dependencies(${PROJECT_NAME}_image_classification
   "rclcpp"
   "object_msgs"
-  "OpenCV")
+  "OpenCV"
+  "cv_bridge")
 
 add_executable(${PROJECT_NAME}_stream_detection src/stream_detection.cpp)
 ament_target_dependencies(${PROJECT_NAME}_stream_detection

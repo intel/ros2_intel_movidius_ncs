@@ -20,7 +20,6 @@ limitations under the License.
   <name>movidius_ncs_lib</name>
   <version>0.3.0</version>
   <description>The Movidius NCS library package</description>
-  <author email="xiaojun.huang@intel.com">Xiaojun Huang</author>
   <maintainer email="xiaojun.huang@intel.com">Xiaojun Huang</maintainer>
   <maintainer email="chao1.li@intel.com">Chao Li</maintainer>
 
@@ -31,14 +30,19 @@ limitations under the License.
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <build_depend>rviz_yaml_cpp_vendor</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>object_msgs</build_depend>
+  <build_depend>cv_bridge</build_depend>
 
   <exec_depend>rviz_yaml_cpp_vendor</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>cv_bridge</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
   <test_depend>ament_cmake_gtest</test_depend>
-  
+
   <export>
     <build_type>ament_cmake</build_type>
   </export>
