@@ -35,7 +35,7 @@ public:
     cam_sub_ = std::make_unique<camSub>(this, "/camera/color/image_raw");
     obj_sub_ = std::make_unique<objSub>(
       this, "/movidius_ncs_stream/classified_objects");
-    sync_sub_ = std::make_unique<sync>(*cam_sub_, *obj_sub_, 10);
+    sync_sub_ = std::make_unique<sync>(*cam_sub_, *obj_sub_, 15);
     sync_sub_->registerCallback(&ClassificationShow::showImage, this);
   }
 
