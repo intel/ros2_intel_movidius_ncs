@@ -226,8 +226,6 @@ bool Param::validateParam()
   }
 
   ROS_INFO_STREAM("use scale = " << scale_);
-
-  std::cout << "end validate yaml" << std::endl;
   return true;
 }
 }  // namespace movidius_ncs_lib
