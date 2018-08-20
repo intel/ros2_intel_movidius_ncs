@@ -100,6 +100,8 @@ if(BUILD_TESTING)
   find_package(object_msgs REQUIRED)
   find_package(movidius_ncs_lib REQUIRED)
   find_package(ament_index_cpp REQUIRED)
+  find_package(message_filters REQUIRED)
+
   ament_lint_auto_find_test_dependencies()
 
   ament_add_gtest(unittest_stream tests/unittest_stream.cpp)
@@ -111,7 +113,8 @@ if(BUILD_TESTING)
       rclcpp
       object_msgs
       ament_index_cpp
-      movidius_ncs_lib)
+      movidius_ncs_lib
+      message_filters)
   endif()
 endif()
 
