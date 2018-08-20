@@ -16,6 +16,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <object_msgs/msg/objects.hpp>
 #include <object_msgs/msg/objects_in_boxes.hpp>
+#include <message_filters/subscriber.h>
+#include <message_filters/time_synchronizer.h>
 
 #include <string>
 #include <fstream>
@@ -36,6 +38,7 @@ bool test_pass = false;
 bool cnn_type_flag = false;
 #define MAXSIZE 100
 const char * buffer;
+std::promise<bool> sub_called;
 
 template<typename DurationT>
 void wait_for_future(
@@ -55,38 +58,41 @@ void wait_for_future(
     " milliseconds\n";
 }
 
+void callback_classify(
+  const sensor_msgs::msg::Image::SharedPtr & img,
+  const object_msgs::msg::Objects::SharedPtr & msg)
+{
+  test_pass = true;
+  sub_called.set_value(true);
+}
+
+void callback_detect(
+  const sensor_msgs::msg::Image::SharedPtr & img,
+  const object_msgs::msg::ObjectsInBoxes::SharedPtr & msg)
+{
+  test_pass = true;
+  sub_called.set_value(true);
+}
+
 TEST(UnitTestStream, testStream) {
   auto node = rclcpp::Node::make_shared("movidius_ncs_stream_tests");
-  rmw_qos_profile_t custom_qos_profile = rmw_qos_profile_default;
-  custom_qos_profile.depth = 5;
-  std::promise<bool> sub_called;
   std::shared_future<bool> sub_called_future(sub_called.get_future());
-
-  auto callback_classify =
-    [&sub_called](const object_msgs::msg::Objects::SharedPtr msg) -> void
-    {
-      test_pass = true;
-      sub_called.set_value(true);
-    };
-
-  auto callback_detect =
-    [&sub_called](const object_msgs::msg::ObjectsInBoxes::SharedPtr msg) -> void
-    {
-      test_pass = true;
-      sub_called.set_value(true);
-    };
-
   rclcpp::executors::SingleThreadedExecutor executor;
   executor.add_node(node);
 
   {
-    auto sub1 = node->create_subscription<object_msgs::msg::ObjectsInBoxes>(
-      "/movidius_ncs_stream/detected_objects",
-      callback_detect, custom_qos_profile);
-
-    auto sub2 = node->create_subscription<object_msgs::msg::Objects>(
-      "/movidius_ncs_stream/classified_objects",
-      callback_classify, custom_qos_profile);
+    message_filters::Subscriber<sensor_msgs::msg::Image> camSub(node.get(),
+      "/camera/color/image_raw");
+    message_filters::Subscriber<object_msgs::msg::Objects> objSub_cla(node.get(),
+      "/movidius_ncs_stream/classified_objects");
+    message_filters::TimeSynchronizer<sensor_msgs::msg::Image,
+      object_msgs::msg::Objects> sync_cla(camSub, objSub_cla, 15);
+    sync_cla.registerCallback(callback_classify);
+    message_filters::Subscriber<object_msgs::msg::ObjectsInBoxes> objSub_dec(node.get(),
+      "/movidius_ncs_stream/detected_objects");
+    message_filters::TimeSynchronizer<sensor_msgs::msg::Image,
+      object_msgs::msg::ObjectsInBoxes> sync_dec(camSub, objSub_dec, 15);
+    sync_dec.registerCallback(callback_detect);
 
     executor.spin_once(std::chrono::seconds(0));
 
