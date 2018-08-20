@@ -15,6 +15,7 @@
 #include <cv_bridge/cv_bridge.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
+#include <message_filters/sync_policies/approximate_time.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <object_msgs/msg/objects.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -32,21 +33,25 @@ public:
   ClassificationShow()
   : Node("classification_show")
   {
-    cam_sub_ = std::make_unique<camSub>(this, "/camera/color/image_raw");
-    obj_sub_ = std::make_unique<objSub>(
-      this, "/movidius_ncs_stream/classified_objects");
-    sync_sub_ = std::make_unique<sync>(*cam_sub_, *obj_sub_, 15);
+    cam_sub_ = std::unique_ptr<camSub>(new camSub(this,
+        "/camera/color/image_raw"));
+    obj_sub_ = std::unique_ptr<objSub>(new objSub(this,
+        "/movidius_ncs_stream/classified_objects"));
+    sync_sub_ = std::unique_ptr<approximateSync>(new approximateSync(
+          approximatePolicy(100), *cam_sub_, *obj_sub_));
     sync_sub_->registerCallback(&ClassificationShow::showImage, this);
   }
 
 private:
   using camSub = message_filters::Subscriber<sensor_msgs::msg::Image>;
   using objSub = message_filters::Subscriber<object_msgs::msg::Objects>;
-  using sync = message_filters::TimeSynchronizer<sensor_msgs::msg::Image,
-      object_msgs::msg::Objects>;
+  using approximatePolicy = message_filters::sync_policies::ApproximateTime
+    <sensor_msgs::msg::Image, object_msgs::msg::Objects>;
+  using approximateSync = message_filters::Synchronizer<approximatePolicy>;
+
   std::unique_ptr<camSub> cam_sub_;
   std::unique_ptr<objSub> obj_sub_;
-  std::unique_ptr<sync> sync_sub_;
+  std::unique_ptr<approximateSync> sync_sub_;
 
   int getFPS()
   {
