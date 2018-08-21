@@ -86,12 +86,12 @@ TEST(UnitTestStream, testStream) {
     message_filters::Subscriber<object_msgs::msg::Objects> objSub_cla(node.get(),
       "/movidius_ncs_stream/classified_objects");
     message_filters::TimeSynchronizer<sensor_msgs::msg::Image,
-      object_msgs::msg::Objects> sync_cla(camSub, objSub_cla, 15);
+      object_msgs::msg::Objects> sync_cla(camSub, objSub_cla, 100);
     sync_cla.registerCallback(callback_classify);
     message_filters::Subscriber<object_msgs::msg::ObjectsInBoxes> objSub_dec(node.get(),
       "/movidius_ncs_stream/detected_objects");
     message_filters::TimeSynchronizer<sensor_msgs::msg::Image,
-      object_msgs::msg::ObjectsInBoxes> sync_dec(camSub, objSub_dec, 15);
+      object_msgs::msg::ObjectsInBoxes> sync_dec(camSub, objSub_dec, 100);
     sync_dec.registerCallback(callback_detect);
 
     executor.spin_once(std::chrono::seconds(0));
