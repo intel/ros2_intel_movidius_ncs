@@ -37,6 +37,7 @@ limitations under the License.
   <build_depend>rviz_yaml_cpp_vendor</build_depend>
   <build_depend>sensor_msgs</build_depend>
   <build_depend>cv_bridge</build_depend>
+  <build_depend>message_filters</build_depend>
 
   <exec_depend>ament_index_cpp</exec_depend>
   <exec_depend>class_loader</exec_depend>
@@ -45,6 +46,7 @@ limitations under the License.
   <exec_depend>rclcpp</exec_depend>
   <exec_depend>rviz_yaml_cpp_vendor</exec_depend>
   <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>message_filters</exec_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
