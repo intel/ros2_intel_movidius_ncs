@@ -18,6 +18,7 @@
 #include <object_msgs/msg/objects_in_boxes.hpp>
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
+#include <message_filters/sync_policies/approximate_time.h>
 
 #include <string>
 #include <fstream>
@@ -27,6 +28,7 @@
 #include <memory>
 #include <chrono>
 #include <stdexcept>
+#include <exception>
 
 #include "gtest/gtest.h"
 #include "rclcpp/rclcpp.hpp"
@@ -63,6 +65,7 @@ void callback_classify(
   const object_msgs::msg::Objects::SharedPtr & msg)
 {
   test_pass = true;
+  sub_called = std::promise<bool>(std::allocator_arg, std::allocator<bool>());
   sub_called.set_value(true);
 }
 
@@ -71,6 +74,7 @@ void callback_detect(
   const object_msgs::msg::ObjectsInBoxes::SharedPtr & msg)
 {
   test_pass = true;
+  sub_called = std::promise<bool>(std::allocator_arg, std::allocator<bool>());
   sub_called.set_value(true);
 }
 
@@ -81,21 +85,26 @@ TEST(UnitTestStream, testStream) {
   executor.add_node(node);
 
   {
+    typedef message_filters::sync_policies::ApproximateTime
+      <sensor_msgs::msg::Image, object_msgs::msg::Objects> approximatePolicy_cla;
+    typedef message_filters::sync_policies::ApproximateTime
+      <sensor_msgs::msg::Image, object_msgs::msg::ObjectsInBoxes> approximatePolicy_dec;
+
     message_filters::Subscriber<sensor_msgs::msg::Image> camSub(node.get(),
       "/camera/color/image_raw");
     message_filters::Subscriber<object_msgs::msg::Objects> objSub_cla(node.get(),
       "/movidius_ncs_stream/classified_objects");
-    message_filters::TimeSynchronizer<sensor_msgs::msg::Image,
-      object_msgs::msg::Objects> sync_cla(camSub, objSub_cla, 100);
+    message_filters::Synchronizer<approximatePolicy_cla> sync_cla(
+      approximatePolicy_cla(100), camSub, objSub_cla);
     sync_cla.registerCallback(callback_classify);
+
     message_filters::Subscriber<object_msgs::msg::ObjectsInBoxes> objSub_dec(node.get(),
       "/movidius_ncs_stream/detected_objects");
-    message_filters::TimeSynchronizer<sensor_msgs::msg::Image,
-      object_msgs::msg::ObjectsInBoxes> sync_dec(camSub, objSub_dec, 100);
+    message_filters::Synchronizer<approximatePolicy_dec> sync_dec(
+      approximatePolicy_dec(100), camSub, objSub_dec);
     sync_dec.registerCallback(callback_detect);
 
     executor.spin_once(std::chrono::seconds(0));
-
     wait_for_future(executor, sub_called_future, std::chrono::seconds(10));
 
     EXPECT_TRUE(test_pass);
