@@ -41,12 +41,12 @@ After that, make sure you can find graph data in ```/opt/movidius/ncappzoo/caffe
 cd ~/ros2_overlay_ws/src
 git clone https://github.com/intel/ros2_object_msgs
 ```
-* Install ROS2 Message Filters ([github](https://github.com/intel/ros2_message_filters))
+* Install ROS2 Message Filters ([github](https://github.com/ros2/message_filters))
 ```Shell
 cd /usr/lib/x86_64-linux-gnu
 sudo ln -s libboost_python-py35.so libboost_python3.so
 cd ~/ros2_overlay_ws/src
-git clone https://github.com/intel/ros2_message_filters
+git clone https://github.com/ros2/message_filters
 ```
 * Install ROS2 vision_opencv ([github](https://github.com/ros-perception/vision_opencv))
 ```Shell

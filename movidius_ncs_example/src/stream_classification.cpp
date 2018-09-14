@@ -33,9 +33,10 @@ public:
   ClassificationShow()
   : Node("classification_show")
   {
-    cam_sub_ = std::unique_ptr<camSub>(new camSub(this,
+    rclcpp::Node::SharedPtr node = std::shared_ptr<rclcpp::Node>(this);
+    cam_sub_ = std::unique_ptr<camSub>(new camSub(node,
         "/camera/color/image_raw"));
-    obj_sub_ = std::unique_ptr<objSub>(new objSub(this,
+    obj_sub_ = std::unique_ptr<objSub>(new objSub(node,
         "/movidius_ncs_stream/classified_objects"));
     sync_sub_ = std::unique_ptr<approximateSync>(new approximateSync(
           approximatePolicy(100), *cam_sub_, *obj_sub_));
