@@ -90,15 +90,15 @@ TEST(UnitTestStream, testStream) {
     typedef message_filters::sync_policies::ApproximateTime
       <sensor_msgs::msg::Image, object_msgs::msg::ObjectsInBoxes> approximatePolicy_dec;
 
-    message_filters::Subscriber<sensor_msgs::msg::Image> camSub(node.get(),
+    message_filters::Subscriber<sensor_msgs::msg::Image> camSub(node,
       "/camera/color/image_raw");
-    message_filters::Subscriber<object_msgs::msg::Objects> objSub_cla(node.get(),
+    message_filters::Subscriber<object_msgs::msg::Objects> objSub_cla(node,
       "/movidius_ncs_stream/classified_objects");
     message_filters::Synchronizer<approximatePolicy_cla> sync_cla(
       approximatePolicy_cla(100), camSub, objSub_cla);
     sync_cla.registerCallback(callback_classify);
 
-    message_filters::Subscriber<object_msgs::msg::ObjectsInBoxes> objSub_dec(node.get(),
+    message_filters::Subscriber<object_msgs::msg::ObjectsInBoxes> objSub_dec(node,
       "/movidius_ncs_stream/detected_objects");
     message_filters::Synchronizer<approximatePolicy_dec> sync_dec(
       approximatePolicy_dec(100), camSub, objSub_dec);
