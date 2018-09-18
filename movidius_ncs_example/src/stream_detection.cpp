@@ -32,8 +32,9 @@ public:
   DetectionShow()
   : Node("detection_show")
   {
-    cam_sub_ = std::make_unique<camSub>(this, "/camera/color/image_raw");
-    obj_sub_ = std::make_unique<objSub>(this, "/movidius_ncs_stream/detected_objects");
+    rclcpp::Node::SharedPtr node = std::shared_ptr<rclcpp::Node>(this); 
+    cam_sub_ = std::make_unique<camSub>(node, "/camera/color/image_raw");
+    obj_sub_ = std::make_unique<objSub>(node, "/movidius_ncs_stream/detected_objects");
     sync_sub_ = std::make_unique<sync>(*cam_sub_, *obj_sub_, 10);
     sync_sub_->registerCallback(&DetectionShow::showImage, this);
   }
