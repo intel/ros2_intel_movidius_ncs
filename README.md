@@ -36,12 +36,12 @@ After that, make sure you can find graph data in ```/opt/movidius/ncappzoo/caffe
   1. RealSense D400 series camera ([github](https://github.com/intel/ros2_intel_realsense))
    **Note**: Create a symbol link from libusb.a to libusb-1.0.a, otherwise "libusb.a" is probably not to be found by librealsense.  
     ```sudo ln -s /usr/lib/x86_64-linux-gnu/libusb-1.0.a /usr/lib/libusb.a```
-* Install ROS2 Message Filters ([github](https://github.com/intel/ros2_message_filters))
+* Install ROS2 Message Filters ([github](https://github.com/ros2/message_filters))
 ```Shell
 cd /usr/lib/x86_64-linux-gnu
 sudo ln -s libboost_python-py35.so libboost_python3.so
 cd ~/ros2_ws/src
-git clone https://github.com/intel/ros2_message_filters
+git clone https://github.com/ros2/message_filters
 ```
 * Install ROS2 vision_opencv ([github](https://github.com/ros-perception/vision_opencv))
 ```Shell
