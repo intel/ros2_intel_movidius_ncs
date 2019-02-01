@@ -45,7 +45,7 @@ void Tensor::loadImageData(const cv::Mat & image)
   cv::resize(image, resized, cv::Size(net_width_, net_height_), 0, 0);
 
   cv::Mat colored;
-  cv::cvtColor(resized, colored, CV_BGR2RGB);
+  cv::cvtColor(resized, colored, cv::COLOR_RGB2BGR);
 
   cv::Mat converted;
   colored.convertTo(converted, CV_32FC3);
